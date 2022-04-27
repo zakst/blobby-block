@@ -9,15 +9,6 @@
     "tsConfigPath": "apps/blobby-block/tsconfig.app.json"
   },
   "projects": {
-    "blobby-block": {
-      "type": "application",
-      "root": "apps/blobby-block",
-      "entryFile": "main",
-      "sourceRoot": "apps/blobby-block/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/blobby-block/tsconfig.app.json"
-      }
-    },
     "blockchain": {
       "type": "application",
       "root": "apps/blockchain",
