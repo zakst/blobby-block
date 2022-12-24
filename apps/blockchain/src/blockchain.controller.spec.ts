@@ -1,17 +1,17 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { BlockchainController } from './blockchain.controller';
-import { BlockchainService } from './blockchain.service';
+import { Test, TestingModule } from '@nestjs/testing'
+import { BlockchainController } from './blockchain.controller'
+import { BlockchainService } from './blockchain.service'
 
 describe('BlockchainController', () => {
-  let blockchainController: BlockchainController;
+  let blockchainController: BlockchainController
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [BlockchainController],
       providers: [BlockchainService],
-    }).compile();
+    }).compile()
 
-    blockchainController = app.get<BlockchainController>(BlockchainController);
+    blockchainController = app.resolve<BlockchainController>(BlockchainController);
   });
 
   describe('root', () => {

@@ -5,8 +5,4 @@ import { BlockchainService } from './blockchain.service';
 export class BlockchainController {
   constructor(private readonly blockchainService: BlockchainService) {}
 
-  @Get()
-  getHello(): string {
-    return this.blockchainService.getHello();
-  }
 }
