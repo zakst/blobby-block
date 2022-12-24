@@ -58,6 +58,6 @@ describe('BlockchainService', () => {
     })
   })
   describe('proofOfWork', () => {
-    
+
   })
 })
