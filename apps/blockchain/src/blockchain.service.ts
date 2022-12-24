@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import BlockDto from './dtos/block.dto'
 import TransactionDto from './dtos/transaction.dto'
+import { sha256 } from 'js-sha256'
 
 @Injectable()
 export class BlockchainService {
-  private chain: BlockDto[]
+  private readonly chain: BlockDto[]
   private pendingTransactions: TransactionDto[]
   constructor(chain: BlockDto[], transactions: TransactionDto[]) {
     this.chain = chain
@@ -43,4 +44,8 @@ export class BlockchainService {
     return this.getLastBlock()['index'] + 1 // number of block the transaction will be added to
   }
 
+  hashBlock(nonce: number, previousBlockHash: string, currentBlockData: string): string {
+    const data = `${previousBlockHash}${nonce.toString()}${JSON.stringify(currentBlockData)}`
+    return sha256(data)
+  }
 }
