@@ -7,6 +7,7 @@ import { sha256 } from 'js-sha256'
 export class BlockchainService {
   private readonly chain: BlockDto[]
   private pendingTransactions: TransactionDto[]
+  private isInValid = (hash) => hash.substring(0, 4) !== '0000'
   constructor(chain: BlockDto[], transactions: TransactionDto[]) {
     this.chain = chain
     this.pendingTransactions = transactions
@@ -27,7 +28,6 @@ export class BlockchainService {
   getChain(): BlockDto[] {
     return this.chain
   }
-
   getPendingTransactions(): TransactionDto[] {
     return this.pendingTransactions
   }
@@ -43,9 +43,17 @@ export class BlockchainService {
     this.pendingTransactions.push(transaction)
     return this.getLastBlock()['index'] + 1 // number of block the transaction will be added to
   }
-
-  hashBlock(nonce: number, previousBlockHash: string, currentBlockData: string): string {
+  hashBlock(nonce: number, previousBlockHash: string, currentBlockData: TransactionDto[]): string {
     const data = `${previousBlockHash}${nonce.toString()}${JSON.stringify(currentBlockData)}`
     return sha256(data)
+  }
+  proofOfWork(previousBlockHash: string, currentBlockData: TransactionDto[]): number {
+    let nonce: number = 0
+    let hash = this.hashBlock(nonce, previousBlockHash, currentBlockData)
+    while (this.isInValid(hash)) {
+      nonce++
+      hash = this.hashBlock(nonce, previousBlockHash, currentBlockData)
+    }
+    return nonce
   }
 }
