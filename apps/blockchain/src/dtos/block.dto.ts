@@ -1,7 +1,7 @@
 import TransactionDto from './transaction.dto'
 
 export default class BlockDto {
-  index: number
+  blockId: number
   timestamp: number
   nonce: number
   hash: string

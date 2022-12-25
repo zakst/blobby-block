@@ -11,10 +11,11 @@ export class BlockchainService {
   constructor(chain: BlockDto[], transactions: TransactionDto[]) {
     this.chain = chain
     this.pendingTransactions = transactions
+    this.createBlock(5808, 'genesis_hash', 'genesis_hash')
   }
-  mineBlock(nonce: number, previousBlockHash: string, hash: string): BlockDto {
+  createBlock(nonce: number, previousBlockHash: string, hash: string): BlockDto {
     const block: BlockDto = {
-      index: this.chain.length + 1,
+      blockId: this.chain.length + 1,
       timestamp: Date.now(),
       transactions: this.pendingTransactions,
       nonce,
@@ -41,7 +42,7 @@ export class BlockchainService {
       receiver
     }
     this.pendingTransactions.push(transaction)
-    return this.getLastBlock()['index'] + 1 // number of block the transaction will be added to
+    return this.getLastBlock()['blockId'] + 1 // number of block the transaction will be added to
   }
   hashBlock(nonce: number, previousBlockHash: string, currentBlockData: TransactionDto[]): string {
     const data = `${previousBlockHash}${nonce.toString()}${JSON.stringify(currentBlockData)}`
