@@ -71,5 +71,8 @@
     "roots": [
       "<rootDir>/apps/"
     ]
+  },
+  "resolutions": {
+    "**/qs": "^6.9.7"
   }
 }
