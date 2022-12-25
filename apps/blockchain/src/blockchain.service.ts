@@ -1,9 +1,7 @@
-import { Injectable } from '@nestjs/common';
 import BlockDto from './dtos/block.dto'
 import TransactionDto from './dtos/transaction.dto'
 import { sha256 } from 'js-sha256'
 
-@Injectable()
 export class BlockchainService {
   private readonly chain: BlockDto[]
   private pendingTransactions: TransactionDto[]
