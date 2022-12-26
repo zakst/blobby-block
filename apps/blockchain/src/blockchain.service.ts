@@ -55,4 +55,13 @@ export class BlockchainService {
     }
     return nonce
   }
+
+  mine(transactions: TransactionDto[]): BlockDto {
+    const lastBlock = this.getLastBlock()
+    const lastBlockHash = lastBlock.hash
+    const currentBlockData: TransactionDto[] = transactions
+    const nonce = this.proofOfWork(lastBlockHash, currentBlockData)
+    const hash = this.hashBlock(nonce, lastBlockHash, currentBlockData)
+    return this.createBlock(nonce, lastBlockHash, hash)
+  }
 }
