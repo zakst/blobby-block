@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Post } from '@nestjs/common'
+import { Body, Controller, Get, HttpException, HttpStatus, Post, UsePipes, ValidationPipe } from '@nestjs/common'
 import { BlockchainService } from './blockchain.service'
 import TransactionDto from './dtos/transaction.dto'
 import TransactionResponseDto from './dtos/transactionResponse.dto'
@@ -12,6 +12,7 @@ const nodeId = uuidv4().split('-').join('')
 @Controller('blobby')
 export class BlockchainController {
   private readonly blobby: BlockchainService
+
   constructor() {
     this.blobby = new BlockchainService([], [])
   }
@@ -27,22 +28,12 @@ export class BlockchainController {
 
   @Post('/transaction')
   public async createTransaction(@Body() data: TransactionDto): Promise<TransactionResponseDto> {
-    try {
-      const blockId = this.blobby.queueTransaction(data.amount, data.sender, data.receiver)
-      return {
-        status: HttpStatus.OK,
-        message: 'Transaction queued successfully',
-        blockId,
-        transaction: data,
-      }
-    } catch (e) {
-      return {
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: 'Failed to queue transaction',
-        blockId: null,
-        transaction: data,
-        errors: e
-      }
+    const blockId = this.blobby.queueTransaction(data.amount, data.sender, data.receiver)
+    return {
+      status: HttpStatus.OK,
+      message: 'Transaction queued successfully',
+      blockId,
+      transaction: data,
     }
   }
 
@@ -52,16 +43,15 @@ export class BlockchainController {
       const block: BlockDto = this.blobby.mine(this.blobby.getPendingTransactions())
       this.blobby.queueTransaction(15.43, 'reward_sender', nodeId) // create reward for the miner
       return {
-        status:HttpStatus.OK,
+        status: HttpStatus.OK,
         message: 'Block was successfully mined',
         block,
       }
     } catch (e) {
       return {
-        status:HttpStatus.INTERNAL_SERVER_ERROR,
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
         block: null,
         message: 'Failed to mine a new block',
-        errors: e
       }
     }
   }
