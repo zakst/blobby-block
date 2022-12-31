@@ -1,5 +1,6 @@
 import { BlockchainService } from './blockchain.service'
 import TransactionDto from './dtos/transaction.dto'
+import BlockDto from './dtos/block.dto'
 
 describe('BlockchainService', () => {
   describe('createBlock', () => {
@@ -69,6 +70,19 @@ describe('BlockchainService', () => {
       ]
       const result = service.proofOfWork('previous_hash', currentData)
       expect(result).toEqual(60717)
+    })
+  })
+  describe('mine', () => {
+    it('should return the mined block for the genesis block', () => {
+      const service = new BlockchainService([], [])
+      const result = service.mine(service.getPendingTransactions())
+      expect(result).toHaveProperty('blockId')
+      expect(result).toHaveProperty('hash')
+      expect(result).toHaveProperty('nonce')
+      expect(result).toHaveProperty('previousBlockHash')
+      expect(result).toHaveProperty('timestamp')
+      expect(result).toHaveProperty('transactions')
+      expect(result.transactions.length).toEqual(0)
     })
   })
 })
