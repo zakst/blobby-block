@@ -1,6 +1,5 @@
 import { BlockchainService } from './blockchain.service'
 import TransactionDto from './dtos/transaction.dto'
-import BlockDto from './dtos/block.dto'
 
 describe('BlockchainService', () => {
   describe('createBlock', () => {
