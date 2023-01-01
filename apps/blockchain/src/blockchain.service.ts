@@ -4,7 +4,8 @@ import { sha256 } from 'js-sha256'
 const port = process.env.PORT
 const baseUrl = process.env.BASE_URL || 'http://localhost'
 export class BlockchainService {
-  public readonly nodeUrl: string
+  public nodeUrl: string
+  public blockchainNodes: string[]
   private readonly chain: BlockDto[]
   private pendingTransactions: TransactionDto[]
   private isInValid = (hash) => hash.substring(0, 4) !== '0000'
@@ -13,6 +14,7 @@ export class BlockchainService {
     this.pendingTransactions = transactions
     this.createBlock(5808, 'genesis_hash', 'genesis_hash')
     this.nodeUrl = `${baseUrl}:${port}`
+    this.blockchainNodes = []
   }
   createBlock(nonce: number, previousBlockHash: string, hash: string): BlockDto {
     const block: BlockDto = {
