@@ -10,6 +10,7 @@ import BroadcastRequestDto from './dtos/broadcastRequest.dto'
 import ResponseDto from './dtos/response.dto'
 import axios from 'axios'
 import RegisterNodeRequestDto from './dtos/registerNodeRequest.dto'
+import SyncNodesRequestDto from './dtos/syncNodesRequest.dto'
 
 const nodeId = uuidv4().split('-').join('')
 
@@ -55,7 +56,7 @@ export class BlockchainController {
       return {
         status: HttpStatus.INTERNAL_SERVER_ERROR,
         block: null,
-        message: 'Failed to mine a new block',
+        message: 'Failed to mine a new block.',
       }
     }
   }
@@ -66,27 +67,23 @@ export class BlockchainController {
       if (!this.blobby.blockchainNodes.includes(data.nodeUrl)) {
         this.blobby.blockchainNodes.push(data.nodeUrl)
       }
-      const requests = this.blobby.blockchainNodes.map(async node => {
-        const endpoint = `${node}/node/register`
+      const requests = this.blobby.blockchainNodes.map(node => {
+        const endpoint = `${node}/blobby/register`
         const body = {
           nodeUrl: data.nodeUrl
         }
-        return axios.post(endpoint, JSON.stringify(body))
+        return axios.post(endpoint, body)
       })
 
-      const response = await Promise.all(requests)
-
-      const syncRequests = response.map(async () => {
-        const endpoint = `${data.nodeUrl}/node/sync`
-        const body = {
-          nodeUrls: [...this.blobby.blockchainNodes, this.blobby.nodeUrl]
-        }
-        return axios.post(endpoint, JSON.stringify(body))
-      })
-      await Promise.all(syncRequests)
+      await Promise.all(requests)
+      const endpoint = `${data.nodeUrl}/blobby/sync`
+      const body = {
+        nodeUrls: [...this.blobby.blockchainNodes, this.blobby.nodeUrl]
+      }
+      await axios.post(endpoint, body)
       return {
         status: HttpStatus.OK,
-        message: 'Node registration and broadcast was a success'
+        message: 'Node registration and broadcast was a success.'
       }
     } catch (e) {
       return {
@@ -101,13 +98,12 @@ export class BlockchainController {
     const isNodeRegistered = this.blobby.blockchainNodes.includes(data.nodeUrl)
     const isNodeCurrent = this.blobby.nodeUrl === data.nodeUrl
     if(isNodeRegistered || isNodeCurrent) {
-      return {
-        status: HttpStatus.CONFLICT,
-        message: `Can not register node`
+      return  {
+        status: HttpStatus.OK,
+        message: `Node either registered or does not need to. There are ${this.blobby.blockchainNodes.length} nodes on blobby`
       }
     }
     this.blobby.blockchainNodes.push(data.nodeUrl)
-    console.log(this.blobby.blockchainNodes)
     return  {
       status: HttpStatus.OK,
       message: `Node registered there are now ${this.blobby.blockchainNodes.length} nodes on blobby`
@@ -115,7 +111,17 @@ export class BlockchainController {
   }
 
   @Post('/sync')
-  public async syncNodes(@Body() data: RegisterNodeRequestDto[]): Promise<any> {
-
+  public async syncNodes(@Body() data: SyncNodesRequestDto): Promise<ResponseDto> {
+    data.nodeUrls.forEach(nodeUrl => {
+      const isNodeRegistered = this.blobby.blockchainNodes.includes(nodeUrl)
+      const isNodeCurrent = this.blobby.nodeUrl === nodeUrl
+      if(!isNodeRegistered && !isNodeCurrent) {
+        this.blobby.blockchainNodes.push(nodeUrl)
+      }
+    })
+    return {
+      status: HttpStatus.OK,
+      message: `${data.nodeUrls.length} nodes registered successfully`
+    }
   }
 }
