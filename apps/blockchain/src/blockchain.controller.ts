@@ -11,6 +11,7 @@ import ResponseDto from './dtos/response.dto'
 import axios from 'axios'
 import RegisterNodeRequestDto from './dtos/registerNodeRequest.dto'
 import SyncNodesRequestDto from './dtos/syncNodesRequest.dto'
+import { PinoLogger } from 'nestjs-pino'
 
 const nodeId = uuidv4().split('-').join('')
 
@@ -18,12 +19,13 @@ const nodeId = uuidv4().split('-').join('')
 export class BlockchainController {
   private readonly blobby: BlockchainService
 
-  constructor() {
+  constructor(private readonly logger: PinoLogger) {
     this.blobby = new BlockchainService([], [])
   }
 
   @Get('/blockchain')
   public async getBlockChain(): Promise<BlockchainResponseDto> {
+    this.logger.debug(`Get blockchain running on port ${process.env.PORT}`)
     return {
       status: HttpStatus.OK,
       message: 'Blobby Block',
