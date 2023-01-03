@@ -1,7 +1,6 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Post, UsePipes, ValidationPipe } from '@nestjs/common'
 import { BlockchainService } from './blockchain.service'
 import TransactionDto from './dtos/transaction.dto'
-import TransactionResponseDto from './dtos/transactionResponse.dto'
 import BlockchainResponseDto from './dtos/blockchainResponse.dto'
 import MinedBlockResponseDto from './dtos/minedBlockResponse.dto'
 import BlockDto from './dtos/block.dto'
@@ -33,33 +32,80 @@ export class BlockchainController {
     }
   }
 
-  @Post('/transaction')
-  public async createTransaction(@Body() data: TransactionDto): Promise<TransactionResponseDto> {
-    const blockId = this.blobby.queueTransaction(data.amount, data.sender, data.receiver)
-    return {
-      status: HttpStatus.OK,
-      message: 'Transaction queued successfully',
-      blockId,
-      transaction: data,
-    }
-  }
-
-  @Get('/mine')
+  @Post('/mine')
   public async mine(): Promise<MinedBlockResponseDto> {
     try {
       const block: BlockDto = this.blobby.mine(this.blobby.getPendingTransactions())
-      this.blobby.queueTransaction(15.43, 'reward_sender', nodeId) // create reward for the miner
+      const requests = this.blobby.blockchainNodes.map(node => {
+        const endpoint = `${node}/blobby/mined-block`
+        return axios.post(endpoint, block)
+      })
+
+      await Promise.all(requests)
+
+      const endpoint = `${this.blobby.nodeUrl}/blobby/decentralised/transaction`
+      await axios.post(endpoint, {
+        amount: 14,
+        sender: '00',
+        receiver: nodeId
+      })
       return {
         status: HttpStatus.OK,
-        message: 'Block was successfully mined',
+        message: `Block was successfully and broadcast successfully from ${nodeId}`,
         block,
       }
     } catch (e) {
       return {
         status: HttpStatus.INTERNAL_SERVER_ERROR,
         block: null,
-        message: 'Failed to mine a new block.',
+        message: e,
       }
+    }
+  }
+  @Post('/mined-block')
+  public async minedBlock(@Body() data): Promise<MinedBlockResponseDto> {
+    const lastBlock = this.blobby.getLastBlock()
+    const isValidPreviousBlockHash = lastBlock.previousBlockHash === data.previousBlockHash
+    const isValidBlockId = lastBlock['blockId'] + 1 === data.blockId
+    this.logger.debug(data)
+    if (isValidPreviousBlockHash && isValidBlockId) {
+      this.blobby.chain.push(data)
+      this.blobby.pendingTransactions = []
+      return {
+        status: HttpStatus.OK,
+        message: 'Block was successfully recorded',
+        block: data
+      }
+    }
+    return {
+      status: HttpStatus.BAD_REQUEST,
+      message: 'Block is not valid',
+      block: data
+    }
+  }
+
+  @Post('/transaction')
+  public async createTransaction(@Body() data: TransactionDto): Promise<ResponseDto> {
+    const blockId = this.blobby.queueTransaction(data)
+    return {
+      status: HttpStatus.OK,
+      message: `Transaction queued successfully at ${nodeId} with blockId ${blockId}`,
+    }
+  }
+
+  @Post('/decentralised/transaction')
+  public async decentralisedTransaction(@Body() data: TransactionDto): Promise<ResponseDto> {
+    const transaction = this.blobby.createTransaction(data.amount, data.sender, data.receiver)
+    this.blobby.queueTransaction(transaction)
+    const requests = this.blobby.blockchainNodes.map(node => {
+      const endpoint = `${node}/blobby/transaction`
+      return axios.post(endpoint, transaction)
+    })
+
+    await Promise.all(requests)
+    return {
+      status: HttpStatus.OK,
+      message: `Transaction broadcast to all nodes successfully from ${nodeId}`,
     }
   }
 

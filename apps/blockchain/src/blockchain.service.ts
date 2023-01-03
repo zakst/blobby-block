@@ -1,13 +1,14 @@
 import BlockDto from './dtos/block.dto'
 import TransactionDto from './dtos/transaction.dto'
 import { sha256 } from 'js-sha256'
+import { v4 as uuidv4 } from 'uuid'
 const port = process.env.PORT
 const baseUrl = process.env.BASE_URL || 'http://localhost'
 export class BlockchainService {
   public nodeUrl: string
   public blockchainNodes: string[]
-  private readonly chain: BlockDto[]
-  private pendingTransactions: TransactionDto[]
+  public chain: BlockDto[]
+  public pendingTransactions: TransactionDto[]
   private isInValid = (hash) => hash.substring(0, 4) !== '0000'
   constructor(chain: BlockDto[], transactions: TransactionDto[]) {
     this.chain = chain
@@ -38,15 +39,19 @@ export class BlockchainService {
   getLastBlock(): BlockDto {
     return this.chain[this.chain.length - 1]
   }
-  queueTransaction(amount: number, sender: string, receiver: string): number {
-    const transaction: TransactionDto = {
+  createTransaction(amount: number, sender: string, receiver: string): TransactionDto {
+    return  {
       amount,
       sender,
-      receiver
+      receiver,
+      transactionId: uuidv4().split('-').join('')
     }
+  }
+  queueTransaction(transaction: TransactionDto): number {
     this.pendingTransactions.push(transaction)
     return this.getLastBlock()['blockId'] + 1 // number of block the transaction will be added to
   }
+
   hashBlock(nonce: number, previousBlockHash: string, currentBlockData: TransactionDto[]): string {
     const data = `${previousBlockHash}${nonce.toString()}${JSON.stringify(currentBlockData)}`
     return sha256(data)

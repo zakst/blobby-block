@@ -5,9 +5,10 @@ export default class TransactionDto {
   @IsPositive()
   amount: number
 
-  @MinLength(10)
+  @MinLength(2)
   sender: string
 
   @MinLength(10)
   receiver: string
+  transactionId?: string
 }
