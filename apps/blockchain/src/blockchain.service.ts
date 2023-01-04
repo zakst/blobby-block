@@ -13,7 +13,7 @@ export class BlockchainService {
   constructor(chain: BlockDto[], transactions: TransactionDto[]) {
     this.chain = chain
     this.pendingTransactions = transactions
-    this.createBlock(5808, 'genesis_hash', 'genesis_hash')
+    this.createBlock(5808, 'p_genesis_hash', 'genesis_hash')
     this.nodeUrl = `${baseUrl}:${port}`
     this.blockchainNodes = []
   }

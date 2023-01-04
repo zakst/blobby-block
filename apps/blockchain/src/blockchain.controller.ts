@@ -24,7 +24,6 @@ export class BlockchainController {
 
   @Get('/blockchain')
   public async getBlockChain(): Promise<BlockchainResponseDto> {
-    this.logger.debug(`Get blockchain running on port ${process.env.PORT}`)
     return {
       status: HttpStatus.OK,
       message: 'Blobby Block',
@@ -36,6 +35,7 @@ export class BlockchainController {
   public async mine(): Promise<MinedBlockResponseDto> {
     try {
       const block: BlockDto = this.blobby.mine(this.blobby.getPendingTransactions())
+      this.logger.debug(block)
       const requests = this.blobby.blockchainNodes.map(node => {
         const endpoint = `${node}/blobby/mined-block`
         return axios.post(endpoint, block)
@@ -65,9 +65,13 @@ export class BlockchainController {
   @Post('/mined-block')
   public async minedBlock(@Body() data): Promise<MinedBlockResponseDto> {
     const lastBlock = this.blobby.getLastBlock()
-    const isValidPreviousBlockHash = lastBlock.previousBlockHash === data.previousBlockHash
+    const isValidPreviousBlockHash = lastBlock.hash === data.previousBlockHash
     const isValidBlockId = lastBlock['blockId'] + 1 === data.blockId
-    this.logger.debug(data)
+    this.logger.debug(`lastBlock previousBlockHash: ${lastBlock.previousBlockHash}`)
+    this.logger.debug(`data previousBlockHash: ${data.previousBlockHash}`)
+    this.logger.debug(`lastBlock blockId: ${lastBlock.blockId + 1}`)
+    this.logger.debug(`data blockId: ${data.blockId}`)
+
     if (isValidPreviousBlockHash && isValidBlockId) {
       this.blobby.chain.push(data)
       this.blobby.pendingTransactions = []
