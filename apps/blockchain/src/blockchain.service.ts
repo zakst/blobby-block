@@ -9,11 +9,15 @@ export class BlockchainService {
   public blockchainNodes: string[]
   public chain: BlockDto[]
   public pendingTransactions: TransactionDto[]
+  private readonly DEFAULT_NONCE: number = 5808
+  private readonly DEFAULT_PREVIOUS_BLOCK_HASH: string = 'p_genesis_hash'
+  private readonly DEFAULT_BLOCK_HASH: string = 'genesis_hash'
   private isInValid = (hash) => hash.substring(0, 4) !== '0000'
+  private areHashesEqual = (blockPreviousHash, previousBlockHash) => blockPreviousHash === previousBlockHash
   constructor(chain: BlockDto[], transactions: TransactionDto[]) {
     this.chain = chain
     this.pendingTransactions = transactions
-    this.createBlock(5808, 'p_genesis_hash', 'genesis_hash')
+    this.createBlock(this.DEFAULT_NONCE, this.DEFAULT_PREVIOUS_BLOCK_HASH, this.DEFAULT_BLOCK_HASH)
     this.nodeUrl = `${baseUrl}:${port}`
     this.blockchainNodes = []
   }
@@ -73,5 +77,20 @@ export class BlockchainService {
     const nonce = this.proofOfWork(lastBlockHash, currentBlockData)
     const hash = this.hashBlock(nonce, lastBlockHash, currentBlockData)
     return this.createBlock(nonce, lastBlockHash, hash)
+  }
+
+  isChainValid(blocks: BlockDto[]): boolean {
+    return blocks.every((block, index) => {
+      if(index === 0) {
+        return block.nonce === this.DEFAULT_NONCE
+        && block.previousBlockHash === this.DEFAULT_PREVIOUS_BLOCK_HASH
+        && block.hash === this.DEFAULT_BLOCK_HASH
+      }
+      const previousBlock = blocks[index - 1]
+      const hash = this.hashBlock(block.nonce, previousBlock.hash, block.transactions)
+      const areHashesEqual = this.areHashesEqual(block.previousBlockHash, previousBlock.hash)
+      const isInValidHash = this.isInValid(hash)
+      return areHashesEqual && !isInValidHash
+    })
   }
 }

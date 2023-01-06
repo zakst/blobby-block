@@ -1,5 +1,8 @@
 import { BlockchainService } from './blockchain.service'
 import TransactionDto from './dtos/transaction.dto'
+jest.mock('uuid', () => ({
+  v4: jest.fn(() => 'random-uuid'),
+}))
 
 describe('BlockchainService', () => {
   describe('createBlock', () => {
@@ -9,26 +12,6 @@ describe('BlockchainService', () => {
       expect(result).toHaveProperty('timestamp')
       expect(result).toHaveProperty('blockId')
       expect(result).toHaveProperty('transactions')
-    })
-  })
-  describe('queueTransaction', () => {
-    it('should create two blocks with the third in the chain having an amount of 12.88', () => {
-      const service = new BlockchainService([], [])
-      service.createBlock(58085808, 'previous_hash', 'current_hash')
-      service.createTransaction(12.88, 'sender_address', 'receiver_address')
-      service.createBlock(108734, 'previous_hash', 'current_hash')
-      expect(service.getChain()[2].transactions[0].amount).toEqual(12.88)
-    })
-    it('should create two blocks not to forget the genesis block and have 3 pending transactions', () => {
-      const service = new BlockchainService([], [])
-      service.createBlock(58085808, 'previous_hash', 'current_hash')
-      service.createTransaction(15.98, 'sender_address', 'receiver_address')
-      service.createBlock(108734, 'previous_hash', 'current_hash')
-      service.createTransaction(11, 'sender_address', 'receiver_address')
-      service.createTransaction(4987, 'sender_address', 'receiver_address')
-      service.createTransaction(2187, 'sender_address', 'receiver_address')
-      expect(service.getChain().length).toEqual(3)
-      expect(service.getPendingTransactions().length).toEqual(3)
     })
     it('should create three blocks not to forget the genesis block and have 0 pending transactions', () => {
       const service = new BlockchainService([], [])
@@ -41,6 +24,34 @@ describe('BlockchainService', () => {
       service.createBlock(788017, 'previous_hash', 'current_hash')
       expect(service.getChain().length).toEqual(4)
       expect(service.getPendingTransactions().length).toEqual(0)
+    })
+  })
+  describe('queueTransaction', () => {
+    it('should queue transaction and return number of block the transaction will be added to', () => {
+      const service = new BlockchainService([], [])
+      const sampleTransactions: TransactionDto =
+        {
+          amount: 12,
+          sender: 'sender_address',
+          receiver: 'receiver_address'
+        }
+
+      const result = service.queueTransaction(sampleTransactions)
+      expect(result).toEqual(2)
+    })
+  })
+  describe('createTransaction', () => {
+    it('should create a transaction', () => {
+      const service = new BlockchainService([], [])
+      service.createBlock(58085808, 'previous_hash', 'current_hash')
+      const result = service.createTransaction(15.98, 'sender_address', 'receiver_address')
+      const expectedResult = {
+          amount: 15.98,
+          sender: 'sender_address',
+          receiver: 'receiver_address',
+          transactionId: 'randomuuid'
+        }
+      expect(result).toEqual(expectedResult)
     })
   })
   describe('hashBlock', () => {
@@ -77,11 +88,64 @@ describe('BlockchainService', () => {
       const result = service.mine(service.getPendingTransactions())
       expect(result).toHaveProperty('blockId')
       expect(result).toHaveProperty('hash')
-      expect(result).toHaveProperty('nonce')
+      expect(result.nonce).toEqual(26104)
       expect(result).toHaveProperty('previousBlockHash')
       expect(result).toHaveProperty('timestamp')
       expect(result).toHaveProperty('transactions')
       expect(result.transactions.length).toEqual(0)
+    })
+  })
+  describe('isChainValid', () => {
+    describe('on success', () => {
+      describe('of first block', () => {
+        it('should return true as the first block is valid', () => {
+          const service = new BlockchainService([], [])
+          const result = service.isChainValid(service.chain)
+          expect(result).toBeTruthy()
+        })
+      })
+      describe('of more blocks', () => {
+        it('should return true as the entire chain is valid', () => {
+          const service = new BlockchainService([], [])
+          service.createBlock(26104, 'genesis_hash', 'current_hash_121')
+          service.createBlock(144300, 'current_hash_121', 'current_hash_4456')
+          const result = service.isChainValid(service.chain)
+          expect(result).toBeTruthy()
+        })
+      })
+    })
+    describe('on failure', () => {
+      describe('of first block', () => {
+        it('should return false as the first block is invalid', () => {
+          const service = new BlockchainService([], [])
+          service.chain[0].previousBlockHash = 'FAKE_HASH'
+          const result = service.isChainValid(service.chain)
+          expect(result).toBeFalsy()
+        })
+      })
+      describe('of more blocks', () => {
+        it('should return false as one of the blocks contains an invalid nonce', () => {
+          const service = new BlockchainService([], [])
+          service.createBlock(26104, 'genesis_hash', 'current_hash_121')
+          service.createBlock(12567, 'current_hash_121', 'current_hash_4456')
+          const result = service.isChainValid(service.chain)
+          expect(result).toBeFalsy()
+        })
+        it('should return true as of the blocks contains an invalid previous hash', () => {
+          const service = new BlockchainService([], [])
+          service.createBlock(26104, 'genesis_hash', 'current_hash_121')
+          service.createBlock(144300, 'current_hah_121', 'current_hash_4456')
+          const result = service.isChainValid(service.chain)
+          expect(result).toBeFalsy()
+        })
+        it('should return true as of the blocks contains an invalid hash', () => {
+          const service = new BlockchainService([], [])
+          service.createBlock(26104, 'genesis_hash', 'current_hash__121')
+          service.createBlock(144300, 'current_hah_121', 'current_hash_4456')
+          const result = service.isChainValid(service.chain)
+          expect(result).toBeFalsy()
+        })
+      })
     })
   })
 })
