@@ -7,10 +7,11 @@ import BlockDto from './dtos/block.dto'
 import { v4 as uuidv4 } from 'uuid'
 import BroadcastRequestDto from './dtos/broadcastRequest.dto'
 import ResponseDto from './dtos/response.dto'
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import RegisterNodeRequestDto from './dtos/registerNodeRequest.dto'
 import SyncNodesRequestDto from './dtos/syncNodesRequest.dto'
 import { PinoLogger } from 'nestjs-pino'
+import ConsensusResponseDto from './dtos/consensusResponse.dto'
 
 const nodeId = uuidv4().split('-').join('')
 
@@ -174,6 +175,44 @@ export class BlockchainController {
     return {
       status: HttpStatus.OK,
       message: `${data.nodeUrls.length} nodes registered successfully`
+    }
+  }
+
+  @Get('/consensus')
+  public async longestChainRule(): Promise<ConsensusResponseDto> {
+    const requests = this.blobby.blockchainNodes.map(node => {
+      const endpoint = `${node}/blobby/blockchain`
+      return axios.get(endpoint)
+    })
+
+    const blockchains: AxiosResponse[] = await Promise.all(requests)
+    let maxChainLength: number = this.blobby.chain.length
+    let sourceOfTruthChain: BlockDto[]
+    let sourceOfTruthTransactions: TransactionDto[]
+    blockchains.forEach(blockchainData => {
+      const currentChainLength = blockchainData.data.blockchain.chain.length
+      if( currentChainLength > maxChainLength) {
+        maxChainLength = currentChainLength
+        sourceOfTruthChain = blockchainData.data.blockchain
+        sourceOfTruthTransactions = blockchainData.data.blockchain.pendingTransactions
+      }
+    })
+    const sourceOfTruthChainIsValid = sourceOfTruthChain && this.blobby.isChainValid(sourceOfTruthChain)
+    if(!sourceOfTruthChain || !sourceOfTruthChainIsValid) {
+      return {
+        status: HttpStatus.OK,
+        message: `Chain was not updated due to invalidity`,
+        chain: this.blobby.chain
+      }
+    }
+    else {
+      this.blobby.chain = sourceOfTruthChain
+      this.blobby.pendingTransactions = sourceOfTruthTransactions
+      return {
+        status: HttpStatus.OK,
+        message: `Chain updated`,
+        chain: sourceOfTruthChain
+      }
     }
   }
 }
