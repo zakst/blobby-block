@@ -85,6 +85,7 @@ export class BlockchainService {
         return block.nonce === this.DEFAULT_NONCE
         && block.previousBlockHash === this.DEFAULT_PREVIOUS_BLOCK_HASH
         && block.hash === this.DEFAULT_BLOCK_HASH
+        && block.transactions.length === 0
       }
       const previousBlock = blocks[index - 1]
       const hash = this.hashBlock(block.nonce, previousBlock.hash, block.transactions)
