@@ -1,5 +1,6 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Post, UsePipes, ValidationPipe } from '@nestjs/common'
 import { BlockchainService } from './blockchain.service'
+import { RewardService } from './reward.service'
 import TransactionDto from './dtos/transaction.dto'
 import BlockchainResponseDto from './dtos/blockchainResponse.dto'
 import MinedBlockResponseDto from './dtos/minedBlockResponse.dto'
@@ -18,9 +19,11 @@ const nodeId = uuidv4().split('-').join('')
 @Controller('blobby')
 export class BlockchainController {
   private readonly blobby: BlockchainService
+  private readonly rewardService: RewardService
 
   constructor(private readonly logger: PinoLogger) {
     this.blobby = new BlockchainService([], [])
+    this.rewardService = new RewardService()
   }
 
   @Get('/blockchain')
@@ -36,20 +39,14 @@ export class BlockchainController {
   public async mine(): Promise<MinedBlockResponseDto> {
     try {
       const block: BlockDto = this.blobby.mine(this.blobby.getPendingTransactions())
-      this.logger.debug(block)
       const requests = this.blobby.blockchainNodes.map(node => {
         const endpoint = `${node}/blobby/mined-block`
         return axios.post(endpoint, block)
       })
 
       await Promise.all(requests)
+      await this.rewardService.reward(this.blobby.nodeUrl, nodeId)
 
-      const endpoint = `${this.blobby.nodeUrl}/blobby/decentralised/transaction`
-      await axios.post(endpoint, {
-        amount: 14,
-        sender: '00',
-        receiver: nodeId
-      })
       return {
         status: HttpStatus.OK,
         message: `Block was successfully and broadcast successfully from ${nodeId}`,
