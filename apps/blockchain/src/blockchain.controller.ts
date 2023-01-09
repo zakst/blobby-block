@@ -1,9 +1,9 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Post, UsePipes, ValidationPipe } from '@nestjs/common'
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, UsePipes, ValidationPipe } from '@nestjs/common'
 import { BlockchainService } from './blockchain.service'
 import { RewardService } from './reward.service'
 import TransactionDto from './dtos/transaction.dto'
 import BlockchainResponseDto from './dtos/blockchainResponse.dto'
-import MinedBlockResponseDto from './dtos/minedBlockResponse.dto'
+import BlockResponseDto from './dtos/blockResponse.dto'
 import BlockDto from './dtos/block.dto'
 import { v4 as uuidv4 } from 'uuid'
 import BroadcastRequestDto from './dtos/broadcastRequest.dto'
@@ -13,6 +13,7 @@ import RegisterNodeRequestDto from './dtos/registerNodeRequest.dto'
 import SyncNodesRequestDto from './dtos/syncNodesRequest.dto'
 import { PinoLogger } from 'nestjs-pino'
 import ConsensusResponseDto from './dtos/consensusResponse.dto'
+import * as process from 'process'
 
 const nodeId = uuidv4().split('-').join('')
 
@@ -24,6 +25,7 @@ export class BlockchainController {
   constructor(private readonly logger: PinoLogger) {
     this.blobby = new BlockchainService([], [])
     this.rewardService = new RewardService()
+    this.logger.debug(`This is nodeId: ${nodeId} running on port: ${process.env.PORT}`)
   }
 
   @Get('/blockchain')
@@ -36,7 +38,7 @@ export class BlockchainController {
   }
 
   @Post('/mine')
-  public async mine(): Promise<MinedBlockResponseDto> {
+  public async mine(): Promise<BlockResponseDto> {
     try {
       const block: BlockDto = this.blobby.mine(this.blobby.getPendingTransactions())
       const requests = this.blobby.blockchainNodes.map(node => {
@@ -61,7 +63,7 @@ export class BlockchainController {
     }
   }
   @Post('/mined-block')
-  public async minedBlock(@Body() data): Promise<MinedBlockResponseDto> {
+  public async minedBlock(@Body() data): Promise<BlockResponseDto> {
     const lastBlock = this.blobby.getLastBlock()
     const isValidPreviousBlockHash = lastBlock.hash === data.previousBlockHash
     const isValidBlockId = lastBlock['blockId'] + 1 === data.blockId
@@ -212,4 +214,32 @@ export class BlockchainController {
       }
     }
   }
+
+  @Get('/block/:blockhash')
+  public async getBlockByHash(@Param() params): Promise<BlockResponseDto> {
+    const block: BlockDto = this.blobby.getBlockByHash(params.blockhash)
+    if (block) {
+      return {
+        status: HttpStatus.OK,
+        message: `Found the block`,
+        block
+      }
+    }
+    return {
+      status: HttpStatus.NOT_FOUND,
+      message: `Hash is incorrect`,
+      block: null
+    }
+  }
+
+  // @Get('/transaction/:transactionId')
+  // public async getBlockByTransactionId(@Param() params): Promise<ConsensusResponseDto> {
+  //
+  // }
+  //
+  // @Get('/node/transaction/:transactionId')
+  // public async getBlocksByNodeAddress(@Param() params): Promise<ConsensusResponseDto> {
+  //
+  // }
+
 }

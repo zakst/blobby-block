@@ -1,6 +1,6 @@
 import ResponseDto from './response.dto'
 import BlockDto from './block.dto'
 
-export default class MinedBlockResponseDto extends ResponseDto {
+export default class BlockResponseDto extends ResponseDto {
   block: BlockDto
 }

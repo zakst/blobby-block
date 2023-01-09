@@ -94,4 +94,8 @@ export class BlockchainService {
       return areHashesEqual && !isInValidHash
     })
   }
+
+  getBlockByHash(blockHash: string): BlockDto {
+    return this.chain.find(block => block.hash === blockHash)
+  }
 }
