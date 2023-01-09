@@ -14,6 +14,7 @@ import SyncNodesRequestDto from './dtos/syncNodesRequest.dto'
 import { PinoLogger } from 'nestjs-pino'
 import ConsensusResponseDto from './dtos/consensusResponse.dto'
 import * as process from 'process'
+import TransactionResponseDto, { TransactionSearchDto } from './dtos/transactionResponse.dto'
 
 const nodeId = uuidv4().split('-').join('')
 
@@ -232,11 +233,24 @@ export class BlockchainController {
     }
   }
 
-  // @Get('/transaction/:transactionId')
-  // public async getBlockByTransactionId(@Param() params): Promise<ConsensusResponseDto> {
-  //
-  // }
-  //
+  @Get('/transaction/:transactionId')
+  public async getBlockByTransactionId(@Param() params): Promise<TransactionResponseDto> {
+    const response: TransactionSearchDto = this.blobby.getTransactionById(params.transactionId)
+    if (response.transaction) {
+      return {
+        ...response,
+        status: HttpStatus.OK,
+        message: `Found the block`,
+      }
+    }
+    return {
+      status: HttpStatus.NOT_FOUND,
+      message: `TransactionId is incorrect`,
+      block: null,
+      transaction: null
+    }
+  }
+
   // @Get('/node/transaction/:transactionId')
   // public async getBlocksByNodeAddress(@Param() params): Promise<ConsensusResponseDto> {
   //

@@ -1,8 +1,15 @@
 import ResponseDto from './response.dto'
 import TransactionDto from './transaction.dto'
+import BlockDto from './block.dto'
 
 export default class TransactionResponseDto extends ResponseDto {
-  blockId: number
+  block: BlockDto
+
+  transaction: TransactionDto
+}
+
+export class TransactionSearchDto {
+  block: BlockDto
 
   transaction: TransactionDto
 }
