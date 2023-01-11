@@ -15,6 +15,7 @@ import { PinoLogger } from 'nestjs-pino'
 import ConsensusResponseDto from './dtos/consensusResponse.dto'
 import * as process from 'process'
 import TransactionResponseDto, { TransactionSearchDto } from './dtos/transactionResponse.dto'
+import AddressTransactionsDto from './dtos/addressTransactions.dto'
 
 const nodeId = uuidv4().split('-').join('')
 
@@ -251,9 +252,25 @@ export class BlockchainController {
     }
   }
 
-  // @Get('/node/transaction/:transactionId')
-  // public async getBlocksByNodeAddress(@Param() params): Promise<ConsensusResponseDto> {
-  //
-  // }
+  @Get('/node/address/:addressId')
+  public async getTransactionsByNodeAddress(@Param() params): Promise<AddressTransactionsDto> {
+    const transactions: TransactionDto[] = this.blobby.getTransactionByAddress(params.addressId)
+    const balance: number = this.blobby.calculateBalanceByAddress(params.addressId, transactions)
+    if (transactions.length > 0) {
+      return {
+        status: HttpStatus.OK,
+        message: `Transactions for ${params.addressId}`,
+        transactions,
+        balance
+      }
+    }
+    return {
+      status: HttpStatus.NOT_FOUND,
+      message: `No transactions found for ${params.addressId}`,
+      transactions,
+      balance
+    }
+
+  }
 
 }

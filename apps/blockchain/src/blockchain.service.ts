@@ -126,4 +126,27 @@ export class BlockchainService {
       transaction: resultTransaction
     }
   }
+
+  getTransactionByAddress(addressId: string): TransactionDto[] {
+    let transactions: TransactionDto[] = []
+    this.chain.forEach(block => {
+      transactions = block.transactions.filter(transaction => {
+        return transaction.sender === addressId || transaction.receiver === addressId
+      })
+    })
+    return transactions
+  }
+
+  calculateBalanceByAddress(addressId: string, transactions: TransactionDto[]): number {
+    let balance: number = 0
+    transactions.forEach(transaction => {
+      if (transaction.receiver === addressId) {
+        balance += transaction.amount
+      }
+      if (transaction.sender === addressId) {
+        balance -= transaction.amount
+      }
+    })
+    return balance
+  }
 }
