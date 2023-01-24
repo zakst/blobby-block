@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import './App.css'
 import {
   Container,
@@ -10,7 +10,25 @@ import {
   RadioGroup,
   TextField
 } from '@material-ui/core'
+
 function App() {
+  const searchOptions = [
+    {
+      value: 'transaction_id',
+      label: 'Transaction Id'
+    },
+    {
+      value: 'block_hash',
+      label: 'Block Hash'
+    },
+    {
+      value: 'address',
+      label: 'Address'
+    }
+  ]
+
+  const [selectedSearchLabel, setSelectedSearchLabel] = useState('')
+
   return (
     <Container maxWidth="xl">
       <Grid container md={12}
@@ -22,16 +40,26 @@ function App() {
               justifyContent="flex-start"
               alignItems="center">
           <FormControl margin={"normal"}>
-            <FormLabel id="search-by">Search By</FormLabel>
+            <FormLabel id="search-by">Search By {selectedSearchLabel}</FormLabel>
             <RadioGroup
+              onChange={(event, value) => {
+                const searchFor = searchOptions.find(option => option.value === value)
+                setSelectedSearchLabel(searchFor!.label)
+              }}
               row
               aria-labelledby="search-by"
               defaultValue="transaction_id"
               name="search-by-group"
             >
-              <FormControlLabel value="transaction_id" control={<Radio/>} label="Transaction Id"/>
-              <FormControlLabel value="block_hash" control={<Radio/>} label="Block Hash"/>
-              <FormControlLabel value="address" control={<Radio/>} label="Address"/>
+              {
+                searchOptions.map(option => (
+                  <FormControlLabel
+                    value={option.value}
+                    control={<Radio />}
+                    label={option.label}
+                  />
+                ))
+              }
             </RadioGroup>
           </FormControl>
         </Grid>
