@@ -1,6 +1,6 @@
-import ResponseDto from './response.dto'
-import TransactionDto from './transaction.dto'
-import BlockDto from './block.dto'
+import ResponseDto from '../../blockchain/src/dtos/response.dto'
+import TransactionDto from '../../blockchain/src/dtos/transaction.dto'
+import BlockDto from '../../blockchain/src/dtos/block.dto'
 
 export default class TransactionResponseDto extends ResponseDto {
   block: BlockDto

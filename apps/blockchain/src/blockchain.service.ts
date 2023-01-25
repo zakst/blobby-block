@@ -2,7 +2,7 @@ import BlockDto from './dtos/block.dto'
 import TransactionDto from './dtos/transaction.dto'
 import { sha256 } from 'js-sha256'
 import { v4 as uuidv4 } from 'uuid'
-import { TransactionSearchDto } from './dtos/transactionResponse.dto'
+import { TransactionSearchDto } from '../../common/dtos/transactionResponse.dto'
 
 const port = process.env.PORT
 const baseUrl = process.env.BASE_URL || 'http://localhost'
