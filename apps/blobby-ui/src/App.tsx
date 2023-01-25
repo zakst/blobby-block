@@ -11,6 +11,8 @@ import {
   TextField
 } from '@material-ui/core'
 
+import { getByTransactionId } from './services/SearchService'
+
 function App() {
   const searchOptions = [
     {
@@ -26,8 +28,22 @@ function App() {
       label: 'Address'
     }
   ]
+  const [selectedSearchLabel, setSelectedSearchLabel] = useState(searchOptions[0].label)
+  const [enteredSearchTerm, setEnteredSearchTerm] = useState('')
 
-  const [selectedSearchLabel, setSelectedSearchLabel] = useState('')
+  const searchBySelection = async () => {
+    switch (selectedSearchLabel) {
+      case searchOptions[0].label:
+        await getByTransactionId(enteredSearchTerm)
+    }
+  }
+
+  const search = async (event: { key: string; preventDefault: () => void }) => {
+    if (event.key === 'Enter' && enteredSearchTerm.length > 5) {
+      await searchBySelection()
+      event.preventDefault()
+    }
+  }
 
   return (
     <Container maxWidth="xl">
@@ -68,7 +84,15 @@ function App() {
               direction="row"
               justifyContent="flex-start"
               alignItems="center">
-          <TextField fullWidth id="search-term" label={"Search Term"} variant="outlined" />
+          <TextField
+            onKeyDown={search}
+            fullWidth
+            autoFocus
+            id="search-term"
+            label={"Search Term"}
+            variant="outlined"
+            onChange={(event) => {setEnteredSearchTerm(event.target.value)}}
+          />
         </Grid>
       </Grid>
 
