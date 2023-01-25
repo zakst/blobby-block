@@ -14,7 +14,7 @@ import SyncNodesRequestDto from './dtos/syncNodesRequest.dto'
 import { PinoLogger } from 'nestjs-pino'
 import ConsensusResponseDto from './dtos/consensusResponse.dto'
 import * as process from 'process'
-import TransactionResponseDto, { TransactionSearchDto } from './dtos/transactionResponse.dto'
+import TransactionResponseDto, { TransactionSearchDto } from '../../common/dtos/transactionResponse.dto'
 import AddressTransactionsDto from './dtos/addressTransactions.dto'
 
 const nodeId = uuidv4().split('-').join('')
