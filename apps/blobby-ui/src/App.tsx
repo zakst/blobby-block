@@ -8,6 +8,7 @@ import {
   Grid,
   Radio,
   RadioGroup,
+  Snackbar,
   TextField
 } from '@material-ui/core'
 
@@ -28,8 +29,13 @@ function App() {
       label: 'Address'
     }
   ]
+  const SEARCH_OPTION_NOT_SUPPORTED = 'The search option is not selected'
   const [selectedSearchLabel, setSelectedSearchLabel] = useState(searchOptions[0].label)
   const [enteredSearchTerm, setEnteredSearchTerm] = useState('')
+  const [snackBar, setSnackBar] = useState({
+    open: false,
+    message: 'Nothing here'
+  })
 
   const searchBySelection = async () => {
     switch (selectedSearchLabel) {
@@ -43,7 +49,10 @@ function App() {
         await getByNodeAddress(enteredSearchTerm)
         break
       default:
-        console.log('error')
+        setSnackBar({
+          open: true,
+          message: SEARCH_OPTION_NOT_SUPPORTED
+        })
     }
   }
 
@@ -56,6 +65,15 @@ function App() {
 
   return (
     <Container maxWidth="xl">
+      <Snackbar
+        open={snackBar.open}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right'
+        }}
+        autoHideDuration={6000}
+        message={snackBar.message}
+      />
       <Grid container md={12}
             direction="row"
             justifyContent="space-evenly">
