@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import './App.css'
 import {
+  Card,
+  CardContent,
   Container,
   FormControl,
   FormControlLabel,
@@ -9,10 +11,12 @@ import {
   Radio,
   RadioGroup,
   Snackbar,
-  TextField
+  TextField, Typography
 } from '@material-ui/core'
 
 import { getByBlockHash, getByNodeAddress, getByTransactionId } from './services/SearchService'
+import { SEARCH_OPTION_NOT_SUPPORTED } from './Constants'
+import { Label } from '@material-ui/icons'
 
 function App() {
   const searchOptions = [
@@ -29,7 +33,6 @@ function App() {
       label: 'Address'
     }
   ]
-  const SEARCH_OPTION_NOT_SUPPORTED = 'The search option is not selected'
   const [selectedSearchLabel, setSelectedSearchLabel] = useState(searchOptions[0].label)
   const [enteredSearchTerm, setEnteredSearchTerm] = useState('')
   const [snackBar, setSnackBar] = useState({
@@ -120,6 +123,51 @@ function App() {
             variant="outlined"
             onChange={(event) => {setEnteredSearchTerm(event.target.value)}}
           />
+        </Grid>
+      </Grid>
+      <Grid container md={12}
+            direction="row"
+            justifyContent="space-evenly">
+        <Grid md={3}>
+          <Card>
+            <CardContent>
+              <Typography color="primary" variant="overline">
+                Transaction Id Result
+              </Typography>
+              <Grid direction="row" container md={12} justifyContent="space-between">
+                <Typography color="textSecondary">
+                  Sender
+                </Typography>
+                <Typography color="secondary">
+                   3343434343
+                </Typography>
+              </Grid>
+              <Grid direction="row" container md={12} justifyContent="space-between">
+                <Typography color="textSecondary">
+                  Receiver
+                </Typography>
+                <Typography color="secondary">
+                  3343434343
+                </Typography>
+              </Grid>
+              <Grid direction="row" container md={12} justifyContent="space-between">
+                <Typography color="textSecondary">
+                  Amount
+                </Typography>
+                <Typography color="secondary">
+                  3343434343
+                </Typography>
+              </Grid>
+              <Grid direction="row" container md={12} justifyContent="space-between">
+                <Typography variant="subtitle2">
+                  TransactionId
+                </Typography>
+                <Typography variant="subtitle2">
+                  3343434343
+                </Typography>
+              </Grid>
+            </CardContent>
+          </Card>
         </Grid>
       </Grid>
 
