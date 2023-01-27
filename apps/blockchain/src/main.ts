@@ -6,6 +6,7 @@ const port = process.env.PORT
 async function bootstrap() {
   const app = await NestFactory.create(BlockchainModule)
   app.useGlobalPipes(new ValidationPipe())
+  app.enableCors()
   await app.listen(port)
 }
 bootstrap()

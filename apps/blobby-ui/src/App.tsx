@@ -11,7 +11,7 @@ import {
   TextField
 } from '@material-ui/core'
 
-import { getByTransactionId } from './services/SearchService'
+import { getByBlockHash, getByNodeAddress, getByTransactionId } from './services/SearchService'
 
 function App() {
   const searchOptions = [
@@ -35,6 +35,15 @@ function App() {
     switch (selectedSearchLabel) {
       case searchOptions[0].label:
         await getByTransactionId(enteredSearchTerm)
+        break
+      case searchOptions[1].label:
+        await getByBlockHash(enteredSearchTerm)
+        break
+      case searchOptions[2].label:
+        await getByNodeAddress(enteredSearchTerm)
+        break
+      default:
+        console.log('error')
     }
   }
 

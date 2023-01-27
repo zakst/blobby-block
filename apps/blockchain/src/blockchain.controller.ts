@@ -3,7 +3,7 @@ import { BlockchainService } from './blockchain.service'
 import { RewardService } from './reward.service'
 import TransactionDto from './dtos/transaction.dto'
 import BlockchainResponseDto from './dtos/blockchainResponse.dto'
-import BlockResponseDto from './dtos/blockResponse.dto'
+import BlockResponseDto from '../../common/dtos/blockResponse.dto'
 import BlockDto from './dtos/block.dto'
 import { v4 as uuidv4 } from 'uuid'
 import BroadcastRequestDto from './dtos/broadcastRequest.dto'
@@ -15,7 +15,7 @@ import { PinoLogger } from 'nestjs-pino'
 import ConsensusResponseDto from './dtos/consensusResponse.dto'
 import * as process from 'process'
 import TransactionResponseDto, { TransactionSearchDto } from '../../common/dtos/transactionResponse.dto'
-import AddressTransactionsDto from './dtos/addressTransactions.dto'
+import AddressTransactionsDto from '../../common/dtos/addressTransactions.dto'
 
 const nodeId = uuidv4().split('-').join('')
 
