@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 import './App.css'
 import {
-  Card,
-  CardContent,
   Container,
   FormControl,
   FormControlLabel,
@@ -11,12 +9,13 @@ import {
   Radio,
   RadioGroup,
   Snackbar,
-  TextField, Typography
+  TextField,
 } from '@material-ui/core'
 
 import { getByBlockHash, getByNodeAddress, getByTransactionId } from './services/SearchService'
 import { SEARCH_OPTION_NOT_SUPPORTED } from './Constants'
-import { Label } from '@material-ui/icons'
+import TransactionSearchResult from './components/TransactionSearchResult'
+import TransactionResponseDto from '../../common/dtos/transactionResponse.dto'
 
 function App() {
   const searchOptions = [
@@ -34,6 +33,7 @@ function App() {
     }
   ]
   const [selectedSearchLabel, setSelectedSearchLabel] = useState(searchOptions[0].label)
+  const [transactionResult, setTransactionResult] = useState(new TransactionResponseDto())
   const [enteredSearchTerm, setEnteredSearchTerm] = useState('')
   const [snackBar, setSnackBar] = useState({
     open: false,
@@ -43,7 +43,8 @@ function App() {
   const searchBySelection = async () => {
     switch (selectedSearchLabel) {
       case searchOptions[0].label:
-        await getByTransactionId(enteredSearchTerm)
+        const response = await getByTransactionId(enteredSearchTerm)
+        setTransactionResult(response)
         break
       case searchOptions[1].label:
         await getByBlockHash(enteredSearchTerm)
@@ -129,50 +130,15 @@ function App() {
             direction="row"
             justifyContent="space-evenly">
         <Grid md={3}>
-          <Card>
-            <CardContent>
-              <Typography color="primary" variant="overline">
-                Transaction Id Result
-              </Typography>
-              <Grid direction="row" container md={12} justifyContent="space-between">
-                <Typography color="textSecondary">
-                  Sender
-                </Typography>
-                <Typography color="secondary">
-                   3343434343
-                </Typography>
-              </Grid>
-              <Grid direction="row" container md={12} justifyContent="space-between">
-                <Typography color="textSecondary">
-                  Receiver
-                </Typography>
-                <Typography color="secondary">
-                  3343434343
-                </Typography>
-              </Grid>
-              <Grid direction="row" container md={12} justifyContent="space-between">
-                <Typography color="textSecondary">
-                  Amount
-                </Typography>
-                <Typography color="secondary">
-                  3343434343
-                </Typography>
-              </Grid>
-              <Grid direction="row" container md={12} justifyContent="space-between">
-                <Typography variant="subtitle2">
-                  TransactionId
-                </Typography>
-                <Typography variant="subtitle2">
-                  3343434343
-                </Typography>
-              </Grid>
-            </CardContent>
-          </Card>
+          <TransactionSearchResult
+            sender={transactionResult.transaction.sender}
+            receiver={transactionResult.transaction.receiver}
+            amount={transactionResult.transaction.amount}
+            transactionId={transactionResult.transaction.transactionId} />
         </Grid>
       </Grid>
-
     </Container>
   )
 }
 
-export default App;
+export default App
