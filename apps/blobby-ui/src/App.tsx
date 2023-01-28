@@ -13,7 +13,7 @@ import {
 } from '@material-ui/core'
 
 import { getByBlockHash, getByNodeAddress, getByTransactionId } from './services/SearchService'
-import { SEARCH_OPTION_NOT_SUPPORTED } from './Constants'
+import { SEARCH_OPTION_NOT_SUPPORTED, SEARCH_TYPES } from './Constants'
 import TransactionSearchResult from './components/TransactionSearchResult'
 import TransactionResponseDto from '../../common/dtos/transactionResponse.dto'
 
@@ -33,6 +33,7 @@ function App() {
     }
   ]
   const [selectedSearchLabel, setSelectedSearchLabel] = useState(searchOptions[0].label)
+  const [searchType, setSearchType] = useState('')
   const [transactionResult, setTransactionResult] = useState(new TransactionResponseDto())
   const [enteredSearchTerm, setEnteredSearchTerm] = useState('')
   const [snackBar, setSnackBar] = useState({
@@ -45,6 +46,7 @@ function App() {
       case searchOptions[0].label:
         const response = await getByTransactionId(enteredSearchTerm)
         setTransactionResult(response)
+        setSearchType(SEARCH_TYPES.TRANSACTION_ID)
         break
       case searchOptions[1].label:
         await getByBlockHash(enteredSearchTerm)
@@ -102,7 +104,7 @@ function App() {
                 searchOptions.map(option => (
                   <FormControlLabel
                     value={option.value}
-                    control={<Radio />}
+                    control={<Radio/>}
                     label={option.label}
                   />
                 ))
@@ -122,20 +124,24 @@ function App() {
             id="search-term"
             label={"Search Term"}
             variant="outlined"
-            onChange={(event) => {setEnteredSearchTerm(event.target.value)}}
+            onChange={(event) => {
+              setEnteredSearchTerm(event.target.value)
+            }}
           />
         </Grid>
       </Grid>
       <Grid container md={12}
             direction="row"
             justifyContent="space-evenly">
-        <Grid md={3}>
-          <TransactionSearchResult
-            sender={transactionResult.transaction.sender}
-            receiver={transactionResult.transaction.receiver}
-            amount={transactionResult.transaction.amount}
-            transactionId={transactionResult.transaction.transactionId} />
-        </Grid>
+        {searchType === SEARCH_TYPES.TRANSACTION_ID && (
+          <Grid md={3}>
+            <TransactionSearchResult
+              sender={transactionResult.transaction.sender}
+              receiver={transactionResult.transaction.receiver}
+              amount={transactionResult.transaction.amount}
+              transactionId={transactionResult.transaction.transactionId}/>
+          </Grid>
+        )}
       </Grid>
     </Container>
   )
