@@ -15,7 +15,7 @@ import {
 import { getByBlockHash, getByNodeAddress, getByTransactionId } from './services/SearchService'
 import { SEARCH_OPTION_NOT_SUPPORTED, SEARCH_TYPES } from './Constants'
 import TransactionSearchResult from './components/TransactionSearchResult'
-import TransactionResponseDto from '../../common/dtos/transactionResponse.dto'
+import TransactionResponseDto from './dtos/transactionResponse.dto'
 
 function App() {
   const searchOptions = [
