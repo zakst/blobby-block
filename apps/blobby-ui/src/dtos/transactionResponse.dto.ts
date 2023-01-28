@@ -7,9 +7,3 @@ export default class TransactionResponseDto extends ResponseDto {
 
   transaction: TransactionDto
 }
-
-export class TransactionSearchDto {
-  block: BlockDto
-
-  transaction: TransactionDto
-}
