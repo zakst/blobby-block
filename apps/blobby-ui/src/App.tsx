@@ -16,6 +16,8 @@ import { getByBlockHash, getByNodeAddress, getByTransactionId } from './services
 import { SEARCH_OPTION_NOT_SUPPORTED, SEARCH_TYPES } from './Constants'
 import TransactionSearchResult from './components/TransactionSearchResult'
 import TransactionResponseDto from './dtos/transactionResponse.dto'
+import BlockResponseDto from './dtos/blockResponse.dto'
+import AddressTransactionsDto from './dtos/addressTransactions.dto'
 
 function App() {
   const searchOptions = [
@@ -35,6 +37,8 @@ function App() {
   const [selectedSearchLabel, setSelectedSearchLabel] = useState(searchOptions[0].label)
   const [searchType, setSearchType] = useState('')
   const [transactionResult, setTransactionResult] = useState(new TransactionResponseDto())
+  const [blockhashResult, setBlockhashResult] = useState(new BlockResponseDto())
+  const [nodeAddressResult, setNodeAddressResult] = useState(new AddressTransactionsDto())
   const [enteredSearchTerm, setEnteredSearchTerm] = useState('')
   const [snackBar, setSnackBar] = useState({
     open: false,
@@ -44,15 +48,19 @@ function App() {
   const searchBySelection = async () => {
     switch (selectedSearchLabel) {
       case searchOptions[0].label:
-        const response = await getByTransactionId(enteredSearchTerm)
-        setTransactionResult(response)
+        const transactionResponse = await getByTransactionId(enteredSearchTerm)
+        setTransactionResult(transactionResponse)
         setSearchType(SEARCH_TYPES.TRANSACTION_ID)
         break
       case searchOptions[1].label:
-        await getByBlockHash(enteredSearchTerm)
+        const blockResponse = await getByBlockHash(enteredSearchTerm)
+        setBlockhashResult(blockResponse)
+        setSearchType(SEARCH_TYPES.BLOCK_HASH)
         break
       case searchOptions[2].label:
-        await getByNodeAddress(enteredSearchTerm)
+        const addressTransactions = await getByNodeAddress(enteredSearchTerm)
+        setNodeAddressResult(addressTransactions)
+        setSearchType(SEARCH_TYPES.ADDRESS)
         break
       default:
         setSnackBar({
