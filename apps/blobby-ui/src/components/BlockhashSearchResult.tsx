@@ -10,7 +10,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper
 } from '@material-ui/core'
 import TransactionDto from '../dtos/transaction.dto'
 
@@ -41,7 +40,7 @@ const BlockhashSearchResult: React.FC<BlockhashSearchResultProps> = props => {
           {`BlockId: ${props.blockId} - Mined on: ${blockDate}`}
         </Typography>
         <Grid direction="row" container md={12} justifyContent="space-between">
-          <TableContainer component={Paper} >
+          <TableContainer>
             <Table aria-label="Transactions Table">
               <TableHead>
                 <TableRow>
