@@ -14,21 +14,34 @@ import {
 } from '@material-ui/core'
 import TransactionDto from '../dtos/transaction.dto'
 
-export type BlockhashSearchResult = {
+export type BlockhashSearchResultProps = {
   blockId: number
   timestamp: number
   transactions: TransactionDto[]
 }
 
-const BlockhashSearchResult: React.FC<BlockhashSearchResult> = props => {
+const BlockhashSearchResult: React.FC<BlockhashSearchResultProps> = props => {
+  const blockDate = new Date(props.timestamp).toLocaleDateString('default', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    timeZoneName: 'long'
+  })
+
   return (
     <Card>
       <CardContent>
         <Typography color="primary" variant="overline">
-          Block hash result (blockId: {props.blockId} - DateTime: {props.timestamp})
+          Block hash result
+        </Typography>
+        <Typography color="secondary" variant="subtitle2">
+          {`BlockId: ${props.blockId} - Mined on: ${blockDate}`}
         </Typography>
         <Grid direction="row" container md={12} justifyContent="space-between">
-          <TableContainer component={Paper}>
+          <TableContainer component={Paper} >
             <Table aria-label="Transactions Table">
               <TableHead>
                 <TableRow>
