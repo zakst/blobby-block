@@ -16,6 +16,7 @@ import TransactionDto from '../dtos/transaction.dto'
 
 export type BlockhashSearchResult = {
   blockId: number
+  timestamp: number
   transactions: TransactionDto[]
 }
 
@@ -24,16 +25,8 @@ const BlockhashSearchResult: React.FC<BlockhashSearchResult> = props => {
     <Card>
       <CardContent>
         <Typography color="primary" variant="overline">
-          Transaction Id Result
+          Block hash result (blockId: {props.blockId} - DateTime: {props.timestamp})
         </Typography>
-        <Grid direction="row" container md={12} justifyContent="space-between">
-          <Typography color="textSecondary">
-            BlockId
-          </Typography>
-          <Typography color="secondary">
-            {props.blockId}
-          </Typography>
-        </Grid>
         <Grid direction="row" container md={12} justifyContent="space-between">
           <TableContainer component={Paper}>
             <Table aria-label="Transactions Table">

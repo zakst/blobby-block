@@ -18,6 +18,7 @@ import TransactionSearchResult from './components/TransactionSearchResult'
 import TransactionResponseDto from './dtos/transactionResponse.dto'
 import BlockResponseDto from './dtos/blockResponse.dto'
 import AddressTransactionsDto from './dtos/addressTransactions.dto'
+import BlockhashSearchResult from './components/BlockhashSearchResult'
 
 function App() {
   const searchOptions = [
@@ -148,6 +149,19 @@ function App() {
               receiver={transactionResult.transaction.receiver}
               amount={transactionResult.transaction.amount}
               transactionId={transactionResult.transaction.transactionId}/>
+          </Grid>
+        )}
+      </Grid>
+      <Grid container md={12}
+            direction="row"
+            justifyContent="space-evenly">
+        {searchType === SEARCH_TYPES.BLOCK_HASH && (
+          <Grid md={9}>
+            <BlockhashSearchResult
+              transactions={blockhashResult.block.transactions}
+              blockId={blockhashResult.block.blockId}
+              timestamp={blockhashResult.block.timestamp}
+            />
           </Grid>
         )}
       </Grid>
