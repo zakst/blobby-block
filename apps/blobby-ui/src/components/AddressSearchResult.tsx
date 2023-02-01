@@ -15,22 +15,11 @@ const AddressSearchResult: React.FC<AddressSearchResultProps> = props => {
     <Card>
       <CardContent>
         <Typography color="primary" variant="overline">
-          Address Result
+          Address Result for {props.searchAddress}
         </Typography>
         <Grid direction="row" container md={12} justifyContent="space-between">
-          <Typography color="textSecondary">
-            Search for
-          </Typography>
-          <Typography color="secondary">
-            {props.searchAddress}
-          </Typography>
-        </Grid>
-        <Grid direction="row" container md={12} justifyContent="space-between">
-          <Typography color="textSecondary">
-            Balance
-          </Typography>
-          <Typography color="secondary">
-            {props.balance}
+          <Typography color="secondary" variant="subtitle2">
+            Balance {props.balance}
           </Typography>
         </Grid>
         <TransactionsTable transactions={props.transactions} />
