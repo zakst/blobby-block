@@ -128,13 +128,11 @@ export class BlockchainService {
   }
 
   getTransactionByAddress(addressId: string): TransactionDto[] {
-    let transactions: TransactionDto[] = []
-    this.chain.forEach(block => {
-      transactions = block.transactions.filter(transaction => {
+    return this.chain.flatMap(block => {
+      return block.transactions.filter(transaction => {
         return transaction.sender === addressId || transaction.receiver === addressId
       })
     })
-    return transactions
   }
 
   calculateBalanceByAddress(addressId: string, transactions: TransactionDto[]): number {
