@@ -69,10 +69,6 @@ export class BlockchainController {
     const lastBlock = this.blobby.getLastBlock()
     const isValidPreviousBlockHash = lastBlock.hash === data.previousBlockHash
     const isValidBlockId = lastBlock['blockId'] + 1 === data.blockId
-    this.logger.debug(`lastBlock previousBlockHash: ${lastBlock.previousBlockHash}`)
-    this.logger.debug(`data previousBlockHash: ${data.previousBlockHash}`)
-    this.logger.debug(`lastBlock blockId: ${lastBlock.blockId + 1}`)
-    this.logger.debug(`data blockId: ${data.blockId}`)
 
     if (isValidPreviousBlockHash && isValidBlockId) {
       this.blobby.chain.push(data)
@@ -181,12 +177,12 @@ export class BlockchainController {
 
   @Get('/consensus')
   public async longestChainRule(): Promise<ConsensusResponseDto> {
-    const requests = this.blobby.blockchainNodes.map(node => {
+    const allBlockChains = this.blobby.blockchainNodes.map(node => {
       const endpoint = `${node}/blobby/blockchain`
       return axios.get(endpoint)
     })
 
-    const blockchains: AxiosResponse[] = await Promise.all(requests)
+    const blockchains: AxiosResponse[] = await Promise.all(allBlockChains)
     let maxChainLength: number = this.blobby.chain.length
     let sourceOfTruthChain: BlockDto[]
     let sourceOfTruthTransactions: TransactionDto[]
@@ -270,7 +266,5 @@ export class BlockchainController {
       transactions,
       balance
     }
-
   }
-
 }
