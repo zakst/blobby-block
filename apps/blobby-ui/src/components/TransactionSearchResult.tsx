@@ -10,11 +10,10 @@ export type TransactionSearchResultProps = {
 
 const TransactionSearchResult: React.FC<TransactionSearchResultProps> = props => {
   return (
-
     <Card>
       <CardContent>
         <Typography color="primary" variant="overline">
-          Transaction Id Result
+          Transaction result for {props.transactionId}
         </Typography>
         <Grid direction="row" container md={12} justifyContent="space-between">
           <Typography color="textSecondary">
@@ -38,14 +37,6 @@ const TransactionSearchResult: React.FC<TransactionSearchResultProps> = props =>
           </Typography>
           <Typography color="secondary">
             {props.amount}
-          </Typography>
-        </Grid>
-        <Grid direction="row" container md={12} justifyContent="space-between">
-          <Typography variant="subtitle2">
-            TransactionId
-          </Typography>
-          <Typography variant="subtitle2">
-            {props.transactionId}
           </Typography>
         </Grid>
       </CardContent>
