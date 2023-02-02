@@ -4,26 +4,36 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Blobby Block is a simple blockchain that works pretty much like bitcoin and is to be used for educational purposes.
+The backend is in [apps/blockchain](./apps/blockchain)
+And the front end block explorer is at [apps/blobby-ui](./apps/blobby-ui)
+
+## Requirements
+* [node](https://nodejs.org/en/download/) `^14.15.0 || ^16.10.0 || >=18.0.0`
+
 
 ## Installation
 
-```bash
-$ npm install
-```
-
-## Running the app
+### Blobby Block 
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+$ yarn install
 ```
+
+### Blobby UI
+
+```bash
+$ cd apps/blobby-ui/
+$ yarn install
+```
+
+## Running blobby
+
+We will be running blobby block locally in development mode
+
+### Backend
+You will need to run multiple instances _blockchain nodes_ to be able to get an idea of how it works
+
 
 ## Test
 
