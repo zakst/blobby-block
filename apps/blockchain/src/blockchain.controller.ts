@@ -30,6 +30,14 @@ export class BlockchainController {
     this.logger.debug(`This is nodeId: ${nodeId} running on port: ${process.env.PORT}`)
   }
 
+  @Get('/health-check')
+  public async healthcheck(): Promise<ResponseDto> {
+    return {
+      status: HttpStatus.OK,
+      message: 'I am one healthy blobby',
+    }
+  }
+
   @Get('/blockchain')
   public async getBlockChain(): Promise<BlockchainResponseDto> {
     return {
