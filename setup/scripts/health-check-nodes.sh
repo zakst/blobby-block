@@ -3,9 +3,7 @@ NODE_BASE_URL='http://localhost:'
 echo -e "$(tput setaf 6)Starting to health check nodes \n"
 
 # Update the port numbers with the ones you chose to run the blobby block on
-NODE_URLS=($NODE_BASE_URL'5000' $NODE_BASE_URL'5001' $NODE_BASE_URL'5005' $NODE_BASE_URL'5003')
-
-CURL_ERROR=0
+NODE_URLS=($NODE_BASE_URL'5000' $NODE_BASE_URL'5001' $NODE_BASE_URL'5002' $NODE_BASE_URL'5003')
 
 for node_url in "${NODE_URLS[@]}"
 do
@@ -15,7 +13,6 @@ do
   curl_exit_status=$?
   if [ $curl_exit_status != 0 ]
   then
-    CURL_ERROR=$curl_exit_status
     echo "$(tput setaf 1)$(tput blink)$(tput bold)"
     echo -e "$node_url is inaccessible \n"
     tput sgr0
