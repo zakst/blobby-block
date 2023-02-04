@@ -1,12 +1,11 @@
-#!/bin/bash -l
-set -euo pipefail
+#!/bin/bash
+clear
+echo -e "$(tput setaf 4)Setting up blobby block \n"
 
-NODE_BASE_URL='http://localhost:'
+parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 
-# Update the port numbers with the ones you chose to run the blobby block on
-NODE_URLS=($NODE_BASE_URL'5000', $NODE_BASE_URL'5001', $NODE_BASE_URL'5002', $NODE_BASE_URL'5003')
+# Check if the blobby blockchain nodes are up and running
 
-for node_url in "${NODE_URLS[@]}"
-do
-	echo "$node_url"
-done
+$parent_path/scripts/health-check-nodes.sh
+
+
