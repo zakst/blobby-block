@@ -4,7 +4,7 @@ NODE_URLS="$@"
 
 for node_url in $NODE_URLS
 do
-  echo "$(tput setaf 5)Checking health for $node_url"
+  echo "$(tput setaf 6)Health Check for $node_url"
   tput sgr0
   curl -I -H "Content-type:application/json" -X GET $node_url"/blobby/health-check"
   curl_exit_status=$?
