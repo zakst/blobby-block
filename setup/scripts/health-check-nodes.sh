@@ -1,4 +1,4 @@
-echo -e "$(tput setaf 6)Starting to health check nodes \n"
+echo -e "$(tput setaf 3)Starting nodes health check \n"
 
 NODE_URLS="$@"
 
@@ -6,7 +6,7 @@ for node_url in $NODE_URLS
 do
   echo "$(tput setaf 6)Health Check for $node_url"
   tput sgr0
-  curl -I -H "Content-type:application/json" -X GET $node_url"/blobby/health-check"
+  curl -s -o /dev/null -H "Content-type:application/json" -X GET $node_url"/blobby/health-check"
   curl_exit_status=$?
   if [ $curl_exit_status != 0 ]
   then

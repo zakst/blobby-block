@@ -2,7 +2,7 @@ NODE_URLS="$@"
 
 FIRST_NODE=${NODE_URLS:0:21}
 
-echo -e "$(tput setaf 6)Broadcasting nodes \n"
+echo -e "$(tput setaf 3)Broadcasting nodes \n"
 
 tput sgr0
 
@@ -12,7 +12,7 @@ do
 
   tput sgr0
 
-  HTTP_CODE=$(curl -o /dev/null -w "%{http_code}" -H "Content-Type:application/json" \
+  HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -H "Content-Type:application/json" \
   -X POST $FIRST_NODE"/blobby/broadcast" \
      -d '{ "nodeUrl":  '\""${node_url}"\"' }')
 
