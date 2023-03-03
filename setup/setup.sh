@@ -16,5 +16,5 @@ $parent_path/scripts/health-check-nodes.sh "${NODE_URLS[@]}"
 # Register all nodes
 $parent_path/scripts/register-nodes.sh "${NODE_URLS[@]}"
 
-# Create some transactions
+# Create some transactions and mine them
 $parent_path/scripts/create-transactions.sh "${NODE_URLS[0]}"
