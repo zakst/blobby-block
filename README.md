@@ -68,7 +68,7 @@ You can import all the endpoints using [this json file](./assets/blobby-block-ap
 ## Test
 
 ```shell
-
+$ yarn test blockchain
 ```
 
 ## Support
