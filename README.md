@@ -57,6 +57,14 @@ The script does the following
 3. Creates a bunch of transactions
 4. Mines the newly created transactions
 
+### Rest Client
+Install a Rest Client I use [Talend Chrome Extension](https://chrome.google.com/webstore/detail/talend-api-tester-free-ed/aejoelaoggembcahagimdiliamlcdmfm?hl=en)
+You can import all the endpoints using [this json file](./assets/blobby-block-apis.json)
+
+### Now what?
+
+
+
 ## Test
 
 ```bash
