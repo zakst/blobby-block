@@ -67,15 +67,8 @@ You can import all the endpoints using [this json file](./assets/blobby-block-ap
 
 ## Test
 
-```bash
-# unit tests
-$ npm run test
+```shell
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
 ```
 
 ## Support
