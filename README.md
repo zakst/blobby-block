@@ -32,17 +32,30 @@ $ yarn install
 ### Backend
 You will need to run multiple instances _blockchain nodes_ to be able to get an idea of how it works
 
-Open 4 terminal instances and run the following one command in each
+Open 4 terminal session and run the following one command in each
 
-```bash
-PORT=5000 yarn start:dev blockchain
-PORT=5001 yarn start:dev blockchain
-PORT=5002 yarn start:dev blockchain
-PORT=5003 yarn start:dev blockchain
+```shell
+$ PORT=5000 yarn start:dev blockchain
+$ PORT=5001 yarn start:dev blockchain
+$ PORT=5002 yarn start:dev blockchain
+$ PORT=5003 yarn start:dev blockchain
 ```
 Now you have four nodes running locally on your machine the result can be something as follows
 
 <img alt="blockchain nodes" src="assets/blockchain-nodes.png">
+
+Now open yet another terminal session and run the following command from root of the project
+
+```shell
+$ ./setup/setup.sh   
+```
+
+The script does the following
+
+1. Checks if the nodes are up and running
+2. Registers the nodes
+3. Creates a bunch of transactions
+4. Mines the newly created transactions
 
 ## Test
 
