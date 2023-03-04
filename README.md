@@ -27,13 +27,22 @@ $ cd apps/blobby-ui/
 $ yarn install
 ```
 
-## Running blobby
-
-We will be running blobby block locally in development mode
+## Development
 
 ### Backend
 You will need to run multiple instances _blockchain nodes_ to be able to get an idea of how it works
 
+Open 4 terminal instances and run the following one command in each
+
+```bash
+PORT=5000 yarn start:dev blockchain
+PORT=5001 yarn start:dev blockchain
+PORT=5002 yarn start:dev blockchain
+PORT=5003 yarn start:dev blockchain
+```
+Now you have four nodes running locally on your machine the result can be something as follows
+
+<img alt="blockchain nodes" src="assets/blockchain-nodes.png">
 
 ## Test
 
