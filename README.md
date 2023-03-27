@@ -32,7 +32,7 @@ $ yarn install
 ### Backend
 You will need to run multiple instances _blockchain nodes_ to be able to get an idea of how it works
 
-Open 4 terminal session and run the following one command in each
+Open 4 terminal sessions and run the following one command in each
 
 ```shell
 $ PORT=5000 yarn start:dev blockchain
@@ -61,9 +61,17 @@ The script does the following
 Install a Rest Client I use [Talend Chrome Extension](https://chrome.google.com/webstore/detail/talend-api-tester-free-ed/aejoelaoggembcahagimdiliamlcdmfm?hl=en)
 You can import all the endpoints using [this json file](./assets/blobby-block-apis.json)
 
-### Now what?
+### Frontend
+If all the above worked, you can explore the created transactions using blobby-ui to do so
 
+```shell
+$ cd apps/blobby-ui
+$ yarn
+$ yarn start
+```
+This should open `http://localhost:3000/` and should look as follows
 
+<img alt="blobby ui" src="assets/blobby-ui.png">
 
 ## Test
 
