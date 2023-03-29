@@ -73,6 +73,11 @@ This should open `http://localhost:3000/` and should look as follows
 
 <img alt="blobby ui" src="assets/blobby-ui.png">
 
+### Explore Blobby
+Now that you have run all the nodes and the [setup script](./setup/setup.sh) you can try the following
+
+
+
 ## Test
 
 ```shell
