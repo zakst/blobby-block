@@ -122,6 +122,7 @@ export class BlockchainController {
   @Post('/broadcast')
   public async broadcastNode(@Body() data: BroadcastRequestDto): Promise<ResponseDto> {
     try {
+      this.blobby.blockchainNodes.push(data.nodeUrl)
       const requests = this.blobby.blockchainNodes.map(node => {
         const endpoint = `${node}/blobby/register`
         const body = {
